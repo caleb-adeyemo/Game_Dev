@@ -41,8 +41,7 @@ public class CuttingCounter : BaseCounter, IHasProgress{
                         if (plateKitchenObject.TryAddIngredient(GetKitchenObject().GetKitchenObjectsSO())){
                             // Destroy the KitchenObject that was on the counter
                             GetKitchenObject().DestroySelf();
-                        }
-                        
+                        } 
                     }
                 }
             }
@@ -75,7 +74,7 @@ public class CuttingCounter : BaseCounter, IHasProgress{
         }
     }
 
-    private bool HasRecipeWithInput(KitchenObjectsSO inputKitchenObjectSO){
+    private bool HasRecipeWithInput(KitchenObjectsSO inputKitchenObjectSO){ // Function to check of the inputed KitchenObjectSO is cuttable
         CuttingRecipeSO cuttingRecipeSO = GetCuttingRecipeSOWithInput(inputKitchenObjectSO);
         return cuttingRecipeSO != null;
     }
@@ -90,7 +89,7 @@ public class CuttingCounter : BaseCounter, IHasProgress{
         }
     }
 
-    private CuttingRecipeSO GetCuttingRecipeSOWithInput(KitchenObjectsSO inputKitchenObjectSO){
+    private CuttingRecipeSO GetCuttingRecipeSOWithInput(KitchenObjectsSO inputKitchenObjectSO){ //
         foreach (CuttingRecipeSO cuttingRecipeSO in cutKitchenObjectSoArray){
             if(cuttingRecipeSO.input == inputKitchenObjectSO){
                 return cuttingRecipeSO;
