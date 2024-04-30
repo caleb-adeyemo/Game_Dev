@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class NpcSpawner : MonoBehaviour
 {
-    [SerializeField] private GameObject npcPrefab; // Prefab of the NPC GameObject
+    [SerializeField] private Npc npcPrefab; // Prefab of the NPC GameObject
     [SerializeField] private Transform spawnPoint; // Point where NPCs will spawn
     [SerializeField] private TableManager tableManager; // Reference to the TableManager
 
@@ -42,19 +42,16 @@ public class NpcSpawner : MonoBehaviour
     void SpawnNPC()
     {
         // Instantiate NPC at spawn point
-        GameObject newNPC = Instantiate(npcPrefab, spawnPoint.position, Quaternion.identity);
-
-        // Get NPCController component
-        NpcController npcController = newNPC.GetComponent<NpcController>();
+        Npc newNPC = Instantiate(npcPrefab, spawnPoint.position, Quaternion.identity);
 
         // Increment the number of spawned NPCs
         numSpawnedNPCs++;
 
         // Get the adreess of the selected free table
-        Transform res = tableManager.GetRandomFreeTable();
+        Table assignedTable = tableManager.GetRandomFreeTable();
 
         // Set NPC destination to a free table
-        npcController.SetDestination(res);
+        newNPC.npcController.SetDestination(assignedTable);
 
         
     }

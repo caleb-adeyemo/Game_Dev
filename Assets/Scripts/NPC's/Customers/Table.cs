@@ -2,23 +2,37 @@ using UnityEngine;
 
 // Serializable attribute allows instances of this class to be shown in the Inspector
 [System.Serializable]
-public class Table
+public class Table : MonoBehaviour, IKitchenObjectParent
 {
-    // Reference to the transform of the table GameObject
-    public Transform tableTransform;
-
-    public string tableNo;
-
     // Boolean flag indicating whether the table is free or not
     public bool isFree;
+    [SerializeField] private GameObject spawnPoint; // Top of the table
+    private KitchenObject kitchenObject; // Kitchen object on the table
+
 
     // Constructor to initialize the Table instance with a given transform
-    public Table(Transform tableTransform)
-    {
-        // Set the tableTransform field to the provided transform
-        this.tableTransform = tableTransform;
-
+    public Table(){
         // By default, mark the table as free
         isFree = true;
+    }
+
+    public Transform GetKitchenObjectFollowTransform(){
+        return spawnPoint.transform;
+    }
+
+    public void SetKitchenObject(KitchenObject newKitchenObject){
+        kitchenObject = newKitchenObject;
+    }
+
+    public KitchenObject GetKitchenObject(){
+        return kitchenObject;
+    }
+
+    public void ClearKitchenObject(){
+        kitchenObject = null;
+    }
+
+    public bool HasKitchenObject(){
+        return kitchenObject != null;
     }
 }

@@ -28,7 +28,7 @@ public class DeleveryManager : MonoBehaviour{
         // Subscribe to event triggered by NPCController
         NpcController.Instance.OnDestinationReached += NpcController_OnDestinationReached;
     }
-    private void NpcController_OnDestinationReached(object sender, EventArgs e)
+    private void NpcController_OnDestinationReached(Table npcTable)
     {
         // Spawn a new order (recipe) when NPC reaches destination
         RecipeSo waitingRecipeSO = recipeListSO.recipeSOList[UnityEngine.Random.Range(0, recipeListSO.recipeSOList.Count)]; // Select a random recipe

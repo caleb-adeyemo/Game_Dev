@@ -30,7 +30,6 @@ public class ProgressBarUI : MonoBehaviour{
         
         // Update the fill amount of the progress bar based on the normalized progress value
         barImage.fillAmount = e.ProgressNormalized;
-        // Debug.Log("Ammount: " + e.ProgressNormalized);
 
         // Set progress bar color
         barImage.color = e.BarColor; 
