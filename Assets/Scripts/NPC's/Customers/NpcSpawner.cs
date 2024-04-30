@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class NpcSpawner : MonoBehaviour
@@ -6,12 +7,20 @@ public class NpcSpawner : MonoBehaviour
     [SerializeField] private Transform spawnPoint; // Point where NPCs will spawn
     [SerializeField] private TableManager tableManager; // Reference to the TableManager
 
-    [SerializeField] private int maxSpawnedNPCs = 3; // Maximum number of spawned NPCs
-    [SerializeField] private float spawnInterval = 4f; // Interval between NPC spawns
+    [SerializeField] private int maxSpawnedNPCs = 1; // Maximum number of spawned NPCs
+    [SerializeField] private float spawnInterval = 0f; // Interval between NPC spawns
 
     private float spawnTimer = 0f; // Timer to track spawning intervals
     private int numSpawnedNPCs = 0; // Track the number of spawned NPCs
 
+    public event EventHandler OnNpcSpawn; // Event triggered when NPC reaches destination
+
+    public static NpcSpawner Instance { get; private set;}
+
+
+   private void Awake(){
+        Instance = this;
+   }
     void Update()
     {
         // Increment the spawn timer
@@ -25,6 +34,8 @@ public class NpcSpawner : MonoBehaviour
 
             // Spawn a new NPC
             SpawnNPC();
+            // Trigger event when NPC Spawns
+            OnNpcSpawn?.Invoke(this, EventArgs.Empty);
         }
     }
 

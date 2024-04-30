@@ -8,8 +8,14 @@ public class DeleveryCounter : BaseCounter{
         if (player.HasKitchenObject()){
             // Check of a player is holding a plate
             if (player.GetKitchenObject().TryGetPlate(out Plate plate)){
-                DeleveryManager.Instance.deliverRecipe(plate);
-                player.GetKitchenObject().DestroySelf();
+                bool completeOrder = DeleveryManager.Instance.deliverRecipe(plate);
+                if (completeOrder){
+                    // Get the object from the player and then set the parent of the object as the Delevery counter
+                    player.GetKitchenObject().SetKitcehnObjParent(this);
+                }else{
+                    player.GetKitchenObject().DestroySelf();
+                }
+                
             }
             
         }
