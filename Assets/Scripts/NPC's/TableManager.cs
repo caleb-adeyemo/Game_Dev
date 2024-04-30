@@ -20,7 +20,9 @@ public class TableManager : MonoBehaviour
                 freeTables.Add(table); // Add free tables to the list
             }
         }
-
+        foreach (Table table in tables){
+            Debug.Log("" + table.tableNo);
+        }
         // If there are free tables available
         if (freeTables.Count > 0)
         {
@@ -29,6 +31,8 @@ public class TableManager : MonoBehaviour
 
             // Mark the selected table as occupied
             freeTables[randomIndex].isFree = false;
+
+            Debug.Log("Selected table: " + freeTables[randomIndex].tableNo);
 
             // Return the transform of the selected table
             return freeTables[randomIndex].tableTransform;

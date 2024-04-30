@@ -7,6 +7,8 @@ public class Table
     // Reference to the transform of the table GameObject
     public Transform tableTransform;
 
+    public string tableNo;
+
     // Boolean flag indicating whether the table is free or not
     public bool isFree;
 
