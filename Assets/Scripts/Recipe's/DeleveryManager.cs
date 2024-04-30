@@ -19,26 +19,42 @@ public class DeleveryManager : MonoBehaviour{
         Instance = this;
         waitingRecipeSoList = new List<RecipeSo>();
     }
+
+    private void Start(){
+        // Subscribe to event triggered by NPCController
+        NpcSpawner.Instance.OnNpcSpawn += SubTo_NpcController;
+    }
+    private void SubTo_NpcController(object sender, EventArgs e){
+        // Subscribe to event triggered by NPCController
+        NpcController.Instance.OnDestinationReached += NpcController_OnDestinationReached;
+    }
+    private void NpcController_OnDestinationReached(object sender, EventArgs e)
+    {
+        // Spawn a new order (recipe) when NPC reaches destination
+        RecipeSo waitingRecipeSO = recipeListSO.recipeSOList[UnityEngine.Random.Range(0, recipeListSO.recipeSOList.Count)]; // Select a random recipe
+        waitingRecipeSoList.Add(waitingRecipeSO); // Add the order to the orderList 
+        OnRecipeSpawned?.Invoke(this, EventArgs.Empty); // Trigger the Event for UI to change and show the orders
+    }
     private void Update(){
-        spawnRecipeTimer -= Time.deltaTime;
+        // spawnRecipeTimer -= Time.deltaTime;
 
-        if (spawnRecipeTimer < 0f){
-            spawnRecipeTimer = spawnRecipeTimerMax;
+        // if (spawnRecipeTimer < 0f){
+        //     spawnRecipeTimer = spawnRecipeTimerMax;
 
-            // If the number of orders active rn is less then the required max of 4 orders; then spawn a random order
-            if (waitingRecipeSoList.Count < waitingRecipesMax){
-                // Choose a random Order to add to the list of things to cook
-                RecipeSo waitingRecipeSO = recipeListSO.recipeSOList[UnityEngine.Random.Range(0, recipeListSO.recipeSOList.Count)];
+        //     // If the number of orders active rn is less then the required max of 4 orders; then spawn a random order
+        //     if (waitingRecipeSoList.Count < waitingRecipesMax){
+        //         // Choose a random Order to add to the list of things to cook
+        //         RecipeSo waitingRecipeSO = recipeListSO.recipeSOList[UnityEngine.Random.Range(0, recipeListSO.recipeSOList.Count)];
 
-                // Add the prde tto the platers cooking list 
-                waitingRecipeSoList.Add(waitingRecipeSO);
+        //         // Add the prde tto the platers cooking list 
+        //         waitingRecipeSoList.Add(waitingRecipeSO);
 
-                OnRecipeSpawned?.Invoke(this, EventArgs.Empty);
-            }
-        }
+        //         OnRecipeSpawned?.Invoke(this, EventArgs.Empty);
+        //     }
+        // }
     }
 
-    public void deliverRecipe(Plate plate){
+    public bool deliverRecipe(Plate plate){
         for (int i = 0; i < waitingRecipeSoList.Count; i++) {
             RecipeSo waitingRecipe = waitingRecipeSoList[i];
 
@@ -68,12 +84,13 @@ public class DeleveryManager : MonoBehaviour{
                     waitingRecipeSoList.RemoveAt(i);
 
                     OnRecipeCopleted?.Invoke(this, EventArgs.Empty);
-                    return;
+                    return true;
                 }
             }
         }
         // Player did not delever the correct recipe
         Debug.Log("Player Didn't delever the corrrect recipe!!!");
+        return false;
     }
 
     public List<RecipeSo> getWaitingRecipeSoList(){

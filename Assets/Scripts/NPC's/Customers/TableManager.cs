@@ -20,9 +20,7 @@ public class TableManager : MonoBehaviour
                 freeTables.Add(table); // Add free tables to the list
             }
         }
-        foreach (Table table in tables){
-            Debug.Log("" + table.tableNo);
-        }
+        
         // If there are free tables available
         if (freeTables.Count > 0)
         {
