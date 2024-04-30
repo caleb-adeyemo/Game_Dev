@@ -4,11 +4,10 @@ using UnityEngine.AI;
 public class ClickToMove : MonoBehaviour
 {
     [SerializeField] NavMeshAgent agent;
-    TableManager tableManager;
+    [SerializeField] TableManager tableManager;
 
     void Start()
     {
-        tableManager = FindObjectOfType<TableManager>(); // Find TableManager in the scene
         SetDestination();
     }
 
