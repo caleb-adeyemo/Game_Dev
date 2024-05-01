@@ -1,41 +1,40 @@
-using UnityEngine;
-using UnityEngine.AI;
 using System;
+using System.Collections.Generic;
+using UnityEngine;
 
 public class NpcController : MonoBehaviour{
-    // Instance
+    // Instance 
     public static NpcController Instance { get; private set; }
-
     // Variables
-    [SerializeField] NavMeshAgent agent; // Reference to the NavMeshAgent component
-    private GameObject exit; // Reference to the Exit door
+    [SerializeField] private Npc npcPrefab; // Prefab of the NPC GameObject
+    [SerializeField] private Transform spawnPoint; // Point where NPCs will spawn
+    [SerializeField] GameObject exit; // Reference to the Exit door
+    [SerializeField] private TableManager tableManager; // Reference to the TableManager
+    [SerializeField] private int maxSpawnedNPCs = 1; // Maximum number of spawned NPCs
+    [SerializeField] private float spawnInterval = 0f; // Interval between NPC spawns
+    private float spawnTimer = 0f; // Timer to track spawning intervals
+    private int numSpawnedNPCs = 0; // Track the number of spawned NPCs
 
-    private bool hasReachedDestination = false; // Flag to track if the NPC has reached its destination
-    private float timeToEat;
+    private List<Npc> spawnedNpcs;
     private float timer;
-    private State state;
 
-    private Table tableNpcIsOn;
+    private Npc loopNpc;
 
-    // States
-    private enum State{
-        WalkingToTable,
-        Waiting,
-        Eating,
-        Destroy,
-        Leaving 
-
+    // Awake
+    public void Awake(){
+        Instance = this;
+        spawnedNpcs = new List<Npc>();
     }
+
 
     // Event
     public delegate void E(Table npcTable);
     public event E OnDestinationReached; // Event triggered when NPC reaches destination
 
-    // Awake
-    public void Awake(){
-        Instance = this;
-        state = State.WalkingToTable;
-    }
+
+    // Events
+    public event EventHandler OnNpcSpawn; // Event triggered when NPC reaches destination
+
 
     // Subscriptions
     public void Start(){
@@ -44,79 +43,112 @@ public class NpcController : MonoBehaviour{
 
     // Event Handlers
     private void OnFoodDelevered(Table table) {
-        // Debug.Log("Waiter dropped food on table: " + table);
-        // Change the state to Eating
-        state = State.Eating;
-
-        // Get a random timeFor the Npc to eat
-        timeToEat = UnityEngine.Random.Range(3, 5);
-
-        // Set the table to be destroyed 
-        tableNpcIsOn = table;
-    }
-
-    // Setter function
-    public void setExit(GameObject _exit){
-        exit = _exit;
-    }
-
-    // NpcController Function
-    public void SetDestination(Table destinationTable){
-        if (destinationTable != null){
-            agent.SetDestination(destinationTable.transform.position); // Set destination for the NPC
-            // Get the Npc component attached to the current GameObject
-            Npc npc = GetComponent<Npc>();
-            npc.SetTable(destinationTable);     
-            hasReachedDestination = false; // Reset the flag when setting a new destination
+        // Cycle through the list of spawned Npc's
+        foreach(Npc npc in spawnedNpcs) {
+            // If the table food was deleveredd is the current npc in the loop
+            if (npc.getTable() == table) {
+                // Change the state to Eating
+                npc.setState(Npc.State.Eating);
+            }
         }
     }
 
     // Update
     void Update(){
-        switch (state){
-            // Walking To table
-            case State.WalkingToTable:
-                // Check if the NPC has reached its destination and the event hasn't been triggered yet
-                if (!hasReachedDestination && !agent.pathPending && agent.remainingDistance <= agent.stoppingDistance){
-                    // Set the state to waiting to prevent multiple event triggers
-                    state = State.Waiting;
+        // Increment the spawn timer
+        spawnTimer += Time.deltaTime;
 
-                    // Get the Npc component attached to the current GameObject
-                    Npc npc = GetComponent<Npc>();
+        // Check if it's time to spawn a new NPC
+        if (spawnTimer >= spawnInterval && numSpawnedNPCs < maxSpawnedNPCs){
+            // Reset the spawn timer
+            spawnTimer = 0f;
 
-                    // Trigger event to place an order; {Subs => DelevryManger.cs}
-                    OnDestinationReached?.Invoke(npc.GetTable());
-                }
-            break;
-            // Idle
-            case State.Waiting:
-            break;
-            // Eating
-            case State.Eating:
-                
-                timer += Time.deltaTime;
-                if (timer >= timeToEat){
-                    state = State.Destroy;
-                }
+            // Spawn a new NPC
+            SpawnNPC();
 
-            break;
-            // Destroy plate; maybe anninmation 
-            case State.Destroy:
-                // Debug.Log("State in Destroy: "+ state);
-                // Destroy the plates on the table
-                if (tableNpcIsOn.GetKitchenObject() != null){
-                    tableNpcIsOn.GetKitchenObject().DestroySelf();
-                    state = State.Leaving;
-                }
-                
-            break; 
-            // Walk away
-            case State.Leaving:
-                Debug.Log("We are walking away now");
-                agent.SetDestination(exit.transform.position);
-                state = State.Waiting;
-                Debug.Log("Final State: " + state);
-            break;  
+            // Trigger event when NPC Spawns
+            OnNpcSpawn?.Invoke(this, EventArgs.Empty);
         }
+
+        for (int i = spawnedNpcs.Count - 1; i >= 0; i--){
+            loopNpc = spawnedNpcs[i];
+            switch (loopNpc.getState()){
+                // Walking To table
+                case Npc.State.WalkingToTable:
+                    // Check if the NPC has reached its destination
+                    if (!loopNpc.agent.pathPending && loopNpc.agent.remainingDistance <= loopNpc.agent.stoppingDistance){
+                        // Trigger event to place an order; {Subs => DelevryManger.cs}
+                        OnDestinationReached?.Invoke(loopNpc.getTable());
+
+                        // Set the state to waiting to prevent multiple event triggers
+                        loopNpc.setState(Npc.State.Waiting);
+                    }
+                break;
+
+                // Idle
+                case Npc.State.Waiting:
+                    // Do Nothing
+                break;
+
+                // Eating
+                case Npc.State.Eating:
+                    timer += Time.deltaTime;
+                    if (timer >= loopNpc.getTimeToEat()){
+                        timer = 0f;
+                        loopNpc.setState( Npc.State.Destroying);
+                    }
+                break;
+
+                // Destroy plate
+                case Npc.State.Destroying:
+                    // Destroy the plates on the table
+                    loopNpc.getTable().GetKitchenObject().DestroySelf();
+                    // Set the state to 'leaving'
+                    loopNpc.setState(Npc.State.Leaving);    
+                break;
+
+                // Walk away
+                case Npc.State.Leaving:
+                    loopNpc.SetDestination(exit);
+                    loopNpc.setState(Npc.State.Left);
+                break;  
+
+                // Destroy Npc
+                case Npc.State.Left:
+                    // Check if the NPC has reached its destination
+                    if (!loopNpc.agent.pathPending && loopNpc.agent.remainingDistance <= loopNpc.agent.stoppingDistance){
+                        // Remove the Npc from the list 
+                        spawnedNpcs.Remove(loopNpc);
+                        // Destroy the Npc
+                        Destroy(loopNpc.gameObject);
+                        Debug.Log("Final State: " + loopNpc.getState());
+                    }
+                break;
+            }
+        }
+        
+    }
+
+    void SpawnNPC(){
+        // Instantiate NPC at spawn point
+        Npc newNPC = Instantiate(npcPrefab, spawnPoint.position, Quaternion.identity);
+
+        // Increment the number of spawned NPCs
+        numSpawnedNPCs++;
+
+        // Set NPC destination to a free table
+        newNPC.SetDestination(AssignTable());
+
+        newNPC.setState(Npc.State.WalkingToTable);
+
+        // Add Npc to the Controller list 
+        spawnedNpcs.Add(newNPC);
+
+        Debug.Log("Npc on Table " + newNPC.getTable() + " Time to eat: " + newNPC.getTimeToEat());
+    }
+
+    private Table AssignTable(){
+        // Get the adreess of the selected free table
+        return tableManager.GetRandomFreeTable();
     }
 }

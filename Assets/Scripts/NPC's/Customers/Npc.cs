@@ -1,26 +1,68 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
-public class Npc : MonoBehaviour, IKitchenObjectParent
-{
-    public static Npc Instance {get; private set;}
+public class Npc : MonoBehaviour, IKitchenObjectParent{
+    // State
+    public enum State{
+        WalkingToTable,
+        Waiting,
+        Eating,
+        Destroying,
+        Leaving,
+        Left
+    }
 
+    // Variables
     [SerializeField] private GameObject spawnPoint; // Waiter's hands
-    private KitchenObject kitchenObject; // Kitchen object waiter is carrying
+    [SerializeField] public NavMeshAgent agent; // Reference to the NavMeshAgent component
+
     private Table npcTable; // Each NPC has a table 
-    public NpcController npcController; // Each Npc has a controller 
+    private State state; // Each Npc has a state its in
+    private float timeToEat = 5f; // Time they habve to eat
+    private KitchenObject kitchenObject; // Kitchen object waiter is carrying
+
+    // Constructor
+    public Npc(){
+        state = State.Waiting;
+    }
+
+    // Start
+    public void Awake(){
+        timeToEat = Random.Range(10, 15);
+    }
 
     // Get
-    public Table GetTable(){
+    public Table getTable(){
         return npcTable;
     }
-
+    public State getState(){
+        return state;
+    }
+    public float getTimeToEat(){
+        return timeToEat;
+    }
     // Set
-    public void SetTable(Table table){
+    public void setTable(Table table){
         npcTable = table;
     }
-    
+    public void setState(State newState){
+        state = newState;
+    }
+
+    // Functions
+    public void SetDestination(Table destinationTable){
+        if (destinationTable != null){
+            agent.SetDestination(destinationTable.transform.position); // Set destination for the NPC
+            setTable(destinationTable);     
+        }
+    }
+    public void SetDestination(GameObject obj){
+        if (obj != null){
+            agent.SetDestination(obj.transform.position); // Set destination for the NPC
+        }
+    }
     // ============================= IKitchenObjectParent Functions ==================================
     public Transform GetKitchenObjectFollowTransform(){
         return spawnPoint.transform;

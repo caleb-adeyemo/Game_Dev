@@ -18,17 +18,14 @@ public class DeleveryManager : MonoBehaviour{
 
     private void Start(){
         // Subscribe to event triggered by NPCController
-        NpcSpawner.Instance.OnNpcSpawn += SubTo_NpcController;
-    }
-    private void SubTo_NpcController(object sender, EventArgs e){
-        // Subscribe to event triggered by NPCController
         NpcController.Instance.OnDestinationReached += NpcController_OnDestinationReached;
     }
-    private void NpcController_OnDestinationReached(Table npcTable)
-    {
+ 
+    private void NpcController_OnDestinationReached(Table npcTable){
         // Spawn a new order (recipe) when NPC reaches destination
         RecipeSo waitingRecipeSO = recipeListSO.recipeSOList[UnityEngine.Random.Range(0, recipeListSO.recipeSOList.Count)]; // Select a random recipe
         Order order = new Order(npcTable, waitingRecipeSO);
+        Debug.Log("Table " + npcTable + " : " + order.getOrderRecipeSO());
         waitingRecipeSoList.Add(waitingRecipeSO); // Add the order to the orderList 
         OnRecipeSpawned?.Invoke(order); // Trigger the Event for UI to change and show the orders
     }
