@@ -1,28 +1,31 @@
 using System;
 using UnityEngine;
 
-public class NpcSpawner : MonoBehaviour
-{
+public class NpcSpawner : MonoBehaviour{
+    // Instance
+    public static NpcSpawner Instance { get; private set;}
+
+    // Variables
     [SerializeField] private Npc npcPrefab; // Prefab of the NPC GameObject
     [SerializeField] private Transform spawnPoint; // Point where NPCs will spawn
+    [SerializeField] GameObject exit; // Reference to the Exit door
     [SerializeField] private TableManager tableManager; // Reference to the TableManager
-
     [SerializeField] private int maxSpawnedNPCs = 1; // Maximum number of spawned NPCs
     [SerializeField] private float spawnInterval = 0f; // Interval between NPC spawns
-
     private float spawnTimer = 0f; // Timer to track spawning intervals
     private int numSpawnedNPCs = 0; // Track the number of spawned NPCs
 
+
+    // Events
     public event EventHandler OnNpcSpawn; // Event triggered when NPC reaches destination
 
-    public static NpcSpawner Instance { get; private set;}
-
-
-   private void Awake(){
+    // Awake
+    private void Awake(){
         Instance = this;
-   }
-    void Update()
-    {
+    }
+
+    // Update
+    void Update(){
         // Increment the spawn timer
         spawnTimer += Time.deltaTime;
 
@@ -34,15 +37,18 @@ public class NpcSpawner : MonoBehaviour
 
             // Spawn a new NPC
             SpawnNPC();
+
             // Trigger event when NPC Spawns
             OnNpcSpawn?.Invoke(this, EventArgs.Empty);
         }
     }
 
-    void SpawnNPC()
-    {
+    void SpawnNPC(){
         // Instantiate NPC at spawn point
         Npc newNPC = Instantiate(npcPrefab, spawnPoint.position, Quaternion.identity);
+
+        // Set the exit for when npc finishes eating 
+        newNPC.npcController.setExit(exit);
 
         // Increment the number of spawned NPCs
         numSpawnedNPCs++;
@@ -52,7 +58,5 @@ public class NpcSpawner : MonoBehaviour
 
         // Set NPC destination to a free table
         newNPC.npcController.SetDestination(assignedTable);
-
-        
     }
 }

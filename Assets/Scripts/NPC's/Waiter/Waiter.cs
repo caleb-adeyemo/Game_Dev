@@ -13,7 +13,7 @@ public class Waiter : MonoBehaviour, IKitchenObjectParent{
     private void Awake(){
         deleveryList = new List<Order>();
     }
-
+    // ==================================== Events ==================================================
     private void Start(){
         // Subscribe to event triggered by DeleveryManager
         DeleveryManager.Instance.OnRecipeSpawned += DeleveryManager_OnRecipeSpawned;
@@ -22,12 +22,17 @@ public class Waiter : MonoBehaviour, IKitchenObjectParent{
     private void DeleveryManager_OnRecipeSpawned(Order order){
         deleveryList.Add(order);
     }
-
+    // ==================================== Events ==================================================
+    // ==================================== GET/SET =================================================
     public List<Order> getDeleveryList(){ // Get waiters delevery list 
         return deleveryList;
     }
+    // ==================================== GET/SET ==================================================
 
-    public Order getOrderFromTable(Table t){
+
+
+    // ============================= Waiter Functions ================================================
+    public Order getOrderWithTableObj(Table t){
         foreach (Order order in deleveryList){
             if (order.getOrdertable() == t){
                 return order;
@@ -37,7 +42,7 @@ public class Waiter : MonoBehaviour, IKitchenObjectParent{
     }
 
 
-    public void removeOrderWithTable(Table _table){
+    public void removeOrderWithTableObj(Table _table){
         Order orderToRemove = null;
         foreach (Order order in deleveryList){
             if (order.getOrdertable() == _table){
@@ -49,7 +54,9 @@ public class Waiter : MonoBehaviour, IKitchenObjectParent{
             deleveryList.Remove(orderToRemove);
         }
     }
+    // ============================= Waiter Functions ================================================
 
+    // ============================= IKitchenObjectParent Functions ==================================
     public Transform GetKitchenObjectFollowTransform(){
         return spawnPoint.transform;
     }
@@ -69,4 +76,5 @@ public class Waiter : MonoBehaviour, IKitchenObjectParent{
     public bool HasKitchenObject(){
         return kitchenObject != null;
     }
+    // ============================= IKitchenObjectParent Functions ==================================
 }

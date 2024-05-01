@@ -32,9 +32,8 @@ public class Stove : BaseCounter, IHasProgress{
     private void Update(){
         
         // If the stove has an object
-        if(HasKitchenObject()) {
-            switch (state)
-            {
+        // if(HasKitchenObject()) {
+            switch (state){
                 case State.Idle:
                     break;
 
@@ -91,7 +90,7 @@ public class Stove : BaseCounter, IHasProgress{
 
                 case State.Burned:
                     break;
-            }
+            // }
         }
 
        
