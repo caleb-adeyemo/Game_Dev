@@ -18,7 +18,7 @@ public class DeleveryMangerUI : MonoBehaviour{
         UpdateVisual();
     }
 
-    private void DeleveryManager_OnRecipeSpawned(object sender, System.EventArgs e){
+    private void DeleveryManager_OnRecipeSpawned(Order order){
         UpdateVisual();
     }
 

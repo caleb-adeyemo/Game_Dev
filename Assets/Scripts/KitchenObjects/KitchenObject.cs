@@ -28,22 +28,22 @@ public class KitchenObject : MonoBehaviour
     }
 
     // Sets the parent counter of this kitchen object.
-    public void SetKitcehnObjParent(IKitchenObjectParent kitchenObjParent){
+    public void SetKitcehnObjParent(IKitchenObjectParent _kitchenObjParent){
         // Clear the kitchen object from the old counter (current one)
         if(this.kitchenObjparent != null){
             this.kitchenObjparent.ClearKitchenObject();
         }
 
-        // Update the counter the object thinks it's on top of
-        this.kitchenObjparent = kitchenObjParent;
-
         // Check to see if the new counter already has something on it
-        if(kitchenObjParent.HasKitchenObject()){
+        if(_kitchenObjParent.HasKitchenObject()){
             Debug.Log("kitchenObjParent already has a kitchen object!");
         }
-        
+
+        // Update the counter the object thinks it's on top of
+        this.kitchenObjparent = _kitchenObjParent;
+
         // Update the object the counter thinks it's holding
-        kitchenObjParent.SetKitchenObject(this);
+        _kitchenObjParent.SetKitchenObject(this);
 
         // Update the visuals of the counter
         transform.parent = this.kitchenObjparent.GetKitchenObjectFollowTransform();

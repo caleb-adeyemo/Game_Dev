@@ -4,16 +4,12 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class DeleveryManager : MonoBehaviour{
-    public event EventHandler OnRecipeSpawned;
+    public delegate void EventHandler_OnRecipeSpawned(Order order);
+    public event EventHandler_OnRecipeSpawned OnRecipeSpawned;
     public event EventHandler OnRecipeCopleted;
     public static DeleveryManager Instance { get; private set;}
     [SerializeField] private RecipeListSO recipeListSO;
     private List<RecipeSo> waitingRecipeSoList;
-
-    private int waitingRecipesMax = 4; // Max number of orders that spawns per time
-
-    private float spawnRecipeTimer;
-    private float spawnRecipeTimerMax = 4f;
 
     private void Awake(){
         Instance = this;
@@ -32,26 +28,11 @@ public class DeleveryManager : MonoBehaviour{
     {
         // Spawn a new order (recipe) when NPC reaches destination
         RecipeSo waitingRecipeSO = recipeListSO.recipeSOList[UnityEngine.Random.Range(0, recipeListSO.recipeSOList.Count)]; // Select a random recipe
+        Order order = new Order(npcTable, waitingRecipeSO);
         waitingRecipeSoList.Add(waitingRecipeSO); // Add the order to the orderList 
-        OnRecipeSpawned?.Invoke(this, EventArgs.Empty); // Trigger the Event for UI to change and show the orders
+        OnRecipeSpawned?.Invoke(order); // Trigger the Event for UI to change and show the orders
     }
     private void Update(){
-        // spawnRecipeTimer -= Time.deltaTime;
-
-        // if (spawnRecipeTimer < 0f){
-        //     spawnRecipeTimer = spawnRecipeTimerMax;
-
-        //     // If the number of orders active rn is less then the required max of 4 orders; then spawn a random order
-        //     if (waitingRecipeSoList.Count < waitingRecipesMax){
-        //         // Choose a random Order to add to the list of things to cook
-        //         RecipeSo waitingRecipeSO = recipeListSO.recipeSOList[UnityEngine.Random.Range(0, recipeListSO.recipeSOList.Count)];
-
-        //         // Add the prde tto the platers cooking list 
-        //         waitingRecipeSoList.Add(waitingRecipeSO);
-
-        //         OnRecipeSpawned?.Invoke(this, EventArgs.Empty);
-        //     }
-        // }
     }
 
     public bool deliverRecipe(Plate plate){

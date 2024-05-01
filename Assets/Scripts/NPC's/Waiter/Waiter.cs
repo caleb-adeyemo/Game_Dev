@@ -8,28 +8,48 @@ public class Waiter : MonoBehaviour, IKitchenObjectParent{
     [SerializeField] private GameObject spawnPoint; // Waiter's hands
     private KitchenObject kitchenObject; // Kitchen object waiter is carrying
 
-    private List<Table> deleveryList;
+    private List<Order> deleveryList;
 
     private void Awake(){
-        deleveryList = new List<Table>();
+        deleveryList = new List<Order>();
     }
 
     private void Start(){
-        // Subscribe to event triggered by NPCController
-        NpcSpawner.Instance.OnNpcSpawn += SubTo_NpcController;
+        // Subscribe to event triggered by DeleveryManager
+        DeleveryManager.Instance.OnRecipeSpawned += DeleveryManager_OnRecipeSpawned;
+
     }
-    private void SubTo_NpcController(object sender, EventArgs e){
-        // Subscribe to event triggered by NPCController
-        NpcController.Instance.OnDestinationReached += NpcController_OnDestinationReached;
+    private void DeleveryManager_OnRecipeSpawned(Order order){
+        deleveryList.Add(order);
     }
 
-    private void NpcController_OnDestinationReached(Table npcTable){
-        deleveryList.Add(npcTable);
-    }
-
-    public List<Table> getDeleveryList(){ // Get waiters delevery list 
+    public List<Order> getDeleveryList(){ // Get waiters delevery list 
         return deleveryList;
     }
+
+    public Order getOrderFromTable(Table t){
+        foreach (Order order in deleveryList){
+            if (order.getOrdertable() == t){
+                return order;
+            }
+        }
+        return null; // Return null if no matching order is found
+    }
+
+
+    public void removeOrderWithTable(Table _table){
+        Order orderToRemove = null;
+        foreach (Order order in deleveryList){
+            if (order.getOrdertable() == _table){
+                orderToRemove = order;
+                break; // Exit loop once the matching order is found
+            }
+        }
+        if (orderToRemove != null){
+            deleveryList.Remove(orderToRemove);
+        }
+    }
+
     public Transform GetKitchenObjectFollowTransform(){
         return spawnPoint.transform;
     }
