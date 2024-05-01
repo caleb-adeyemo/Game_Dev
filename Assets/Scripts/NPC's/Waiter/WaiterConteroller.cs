@@ -1,7 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using JetBrains.Annotations;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -9,83 +7,97 @@ public class WaiterController : MonoBehaviour
 {
     [SerializeField] private DeleveryCounter deliveryCounter; // Reference to the delivery counter
     [SerializeField] private NavMeshAgent agent; // Reference to the NavMeshAgent component
-    [SerializeField] private Waiter waiter; // Waiter ref.
+    [SerializeField] private Waiter waiter; // Waiter reference
     [SerializeField] private GameObject home; // Waiter station
 
-    private Table tableToDeliverTo;
-
-    // [SerializeField] private Table testTable;
+    private Queue<Vector3> destinations = new Queue<Vector3>(); // Queue of destinations
     private bool hasAnOrder = false;
 
-    private void Start(){
+    private void Start()
+    {
         DeleveryManager.Instance.OnRecipeCopleted += OnRecipeCompletedHandler; // Subscribe to the event
     }
 
-    private void OnDestroy(){
-        DeleveryManager.Instance.OnRecipeCopleted -= OnRecipeCompletedHandler; // Unsubscribe from the event
+    private void OnRecipeCompletedHandler(object sender, System.EventArgs e)
+    {
+        // If the waiter is already delivering an order, stack the delivery counter as the next destination
+        if (hasAnOrder){
+            destinations.Enqueue(deliveryCounter.transform.position);
+        }
+        else{
+            // Set the destination of the waiter to the delivery counter
+            SetDestination(deliveryCounter.transform.position);
+        }
     }
 
-    private void OnRecipeCompletedHandler(object sender, System.EventArgs e){
-        // Set the destination of the waiter to the delivery counter
-        SetDestination(deliveryCounter);
+    private void SetDestination(Vector3 destination)
+    {
+        agent.SetDestination(destination); // Set destination for the waiter
+        hasAnOrder = true; // Update the state of the waiter 
     }
 
-    private void SetDestination(DeleveryCounter destination){
-        if (destination != null)
-        {
-            agent.SetDestination(destination.transform.position); // Set destination for the NPC
-            hasAnOrder = true; // Update the state of the waiter 
+    private void SetNextDestination(){
+        // Check there is at least one destination in the Queue
+        if (destinations.Count > 0){
+            // Pop the destination
+            Vector3 nextDestination = destinations.Dequeue();
+            // Set next destination for the waiter
+            agent.SetDestination(nextDestination); 
         }
     }
 
     private void Update(){
-        if(hasAnOrder){
+        if (hasAnOrder){
             // Waiter has the kitchen object, deliver it to the table 
             if (waiter.HasKitchenObject()){
                 // Check if the waiter is at the table
                 if (agent.remainingDistance <= agent.stoppingDistance){
                     // Drop the order
-                    waiter.GetKitchenObject().SetKitcehnObjParent(tableToDeliverTo);
+                    waiter.GetKitchenObject().SetKitcehnObjParent(waiter.getDeleveryList()[0].getOrdertable());
 
-                    // Remove the order form the waiters list 
-                    waiter.removeOrderWithTable(tableToDeliverTo);
+                    // Remove the order from the waiter's list 
+                    waiter.removeOrderWithTable(waiter.getDeleveryList()[0].getOrdertable());
 
-                    // if (deliveryCounter.HasKitchenObject())
-                    // Update the state of the waiter
-                    hasAnOrder = false;
+                    // There are no more orders to deliver
+                    if (destinations.Count == 0){
+                        // Update the state of the waiter
+                        hasAnOrder = false;
+                    }
+                    else{
+                        // Set the next destination if there are more orders to deliver
+                        SetNextDestination();
+                    }
                 }
             }
             // Waiter doesn't have anything in their hands, pick up the order
-            else { 
+            else{
                 if (agent.remainingDistance <= agent.stoppingDistance){
                     // Pick up the order from the delivery counter
                     deliveryCounter.GetKitchenObject().SetKitcehnObjParent(waiter);
                     // Set the destination to the next table in the waiter's list that has the order he is holding 
-                    if (waiter.getDeleveryList().Count > 0){
+                    if (waiter.getDeleveryList().Count > 0)
+                    {
                         // Get the plate the player is carrying
-                        if(waiter.GetKitchenObject().TryGetPlate(out Plate plate)){
-                            // List of ingrediants on the waiters plate
+                        if (waiter.GetKitchenObject().TryGetPlate(out Plate plate))
+                        {
+                            // List of ingredients on the waiter's plate
                             List<KitchenObjectsSO> list = plate.GetKitchenObjectsSOList();
 
-                            // Itterate over each order in the waiters list 
-                            Debug.Log("============== Order of check ===========");
-                            foreach (Order order in waiter.getDeleveryList()){
-                                Debug.Log("Name: " + order.getOrderRecipeSO());
-                                // Compare the list of ingredients on the plate with the list fo ingrediants in the pending orders list
+                            // Itterate over each order in the waiter's list 
+                            foreach (Order order in waiter.getDeleveryList())
+                            {
+                                // Compare the list of ingredients on the plate with the list of ingredients in the pending orders list
                                 HashSet<KitchenObjectsSO> set1 = new HashSet<KitchenObjectsSO>(list);
                                 HashSet<KitchenObjectsSO> set2 = new HashSet<KitchenObjectsSO>(order.getOrderRecipeSO().getIngredients());
                                 bool areEqual = set1.SetEquals(set2);
 
                                 // check which order is the same as the one waiter is holding 
-                                if(areEqual){
-                                    // The first table that has an order == to the order waiter is holding
-                                    tableToDeliverTo = order.getOrdertable();
-
-                                    Debug.Log("Choosen table:" + tableToDeliverTo);
-
-                                    // Debug.Log(tableToDeliverTo);
-                                    agent.SetDestination(tableToDeliverTo.transform.position);
-                                    break; // Prevent the tableToDelever form being overwritten if there are 2 of the same orders
+                                if (areEqual)
+                                {
+                                    // Set the destination to the table
+                                    destinations.Enqueue(order.getOrdertable().transform.position);
+                                    SetNextDestination(); // Set next destination
+                                    break; // Prevent the tableToDeliver from being overwritten if there are 2 of the same orders
                                 }
                             }
                         }
@@ -93,9 +105,9 @@ public class WaiterController : MonoBehaviour
                 }
             }
         }
-        // Doesnt have Orders
-        else{
-            // Go back to the home station
+        // If the waiter doesn't have orders, go back to the home station
+        else
+        {
             agent.SetDestination(home.transform.position);
         }
     }
