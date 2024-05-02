@@ -1,5 +1,5 @@
 {
-    "name": "PlayerINputActions",
+    "name": "PlayerInputActions",
     "maps": [
         {
             "name": "Player",
@@ -27,6 +27,15 @@
                     "name": "Cuts",
                     "type": "Button",
                     "id": "92bb4049-007a-4452-abac-33c152f66803",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Pause",
+                    "type": "Button",
+                    "id": "acb66250-af9b-4ee5-859c-43b28264e0f2",
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
@@ -163,6 +172,17 @@
                     "processors": "",
                     "groups": "",
                     "action": "Cuts",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "deecd697-a5c5-4d75-9a67-fa3f0cd39902",
+                    "path": "<Keyboard>/escape",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Pause",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

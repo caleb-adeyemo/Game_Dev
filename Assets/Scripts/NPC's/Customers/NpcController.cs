@@ -124,7 +124,6 @@ public class NpcController : MonoBehaviour{
                         // Update the No of spawned npc's 
                         numSpawnedNPCs--;
                         tableManager.ReleaseTable(loopNpc.getTable());
-                        Debug.Log("Final State: " + loopNpc.getState());
                     }
                 break;
             }
@@ -146,8 +145,6 @@ public class NpcController : MonoBehaviour{
 
         // Add Npc to the Controller list 
         spawnedNpcs.Add(newNPC);
-
-        Debug.Log("Npc on Table " + newNPC.getTable() + " Time to eat: " + newNPC.getTimeToEat());
     }
 
     private Table AssignTable(){

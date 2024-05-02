@@ -8,7 +8,6 @@ public class ClockUI : MonoBehaviour
     [SerializeField] private Image clockImage;
 
     private void Update(){
-        Debug.Log(GameManager.Instance.GetGamePlayingTemerNormalized());
        clockImage.fillAmount = GameManager.Instance.GetGamePlayingTemerNormalized();
 
        if(GameManager.Instance.GetGamePlayingTemerNormalized() < 0.25){
