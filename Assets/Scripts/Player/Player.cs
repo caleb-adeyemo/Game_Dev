@@ -36,11 +36,15 @@ public class Player : MonoBehaviour, IKitchenObjectParent
     }
     // Event Handleer
     private void Handle_Interaction(object sender, System.EventArgs e){
+        if (!GameManager.Instance.IsGamePlaying()) return; // Stop all interactions if the game is not in playing state
+
         if(selectedCounter != null){
             selectedCounter.Interact(this);
         }  
     }
      private void Handle_Interaction2(object sender, System.EventArgs e){
+        if (!GameManager.Instance.IsGamePlaying()) return; // Stop all interactions if the game is not in playing state
+
         if(selectedCounter != null){
             selectedCounter.Interact2(this);
         }  

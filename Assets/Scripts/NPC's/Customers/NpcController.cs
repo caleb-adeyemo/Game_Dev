@@ -121,6 +121,9 @@ public class NpcController : MonoBehaviour{
                         spawnedNpcs.Remove(loopNpc);
                         // Destroy the Npc
                         Destroy(loopNpc.gameObject);
+                        // Update the No of spawned npc's 
+                        numSpawnedNPCs--;
+                        tableManager.ReleaseTable(loopNpc.getTable());
                         Debug.Log("Final State: " + loopNpc.getState());
                     }
                 break;

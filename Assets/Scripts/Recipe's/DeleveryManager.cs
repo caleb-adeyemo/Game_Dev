@@ -11,6 +11,8 @@ public class DeleveryManager : MonoBehaviour{
     [SerializeField] private RecipeListSO recipeListSO;
     private List<RecipeSo> waitingRecipeSoList;
 
+    private int SuccessfullOrdersNo;
+
     private void Awake(){
         Instance = this;
         waitingRecipeSoList = new List<RecipeSo>();
@@ -60,7 +62,7 @@ public class DeleveryManager : MonoBehaviour{
                 if (plateComplete){
                     // Player delevered the corrrect recipe
                     waitingRecipeSoList.RemoveAt(i);
-
+                    SuccessfullOrdersNo++;
                     OnRecipeCopleted?.Invoke(this, EventArgs.Empty);
                     return true;
                 }
@@ -73,5 +75,9 @@ public class DeleveryManager : MonoBehaviour{
 
     public List<RecipeSo> getWaitingRecipeSoList(){
         return waitingRecipeSoList;
+    }
+
+    public int getSuccessfullOrdersNo(){
+        return SuccessfullOrdersNo;
     }
 }

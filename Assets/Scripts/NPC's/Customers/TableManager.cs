@@ -40,15 +40,8 @@ public class TableManager : MonoBehaviour
     }
 
     // Release a table by marking it as free
-    // public void ReleaseTable(Table table)
-    // {
-    //     // Find the table object with the specified transform
-    //     Table tableObj = tables.Find(t => t.tableObject == table);
-        
-    //     // If the table is found
-    //     if (tableObj != null)
-    //     {
-    //         tableObj.isFree = true; // Mark table as available
-    //     }
-    // }
+    public void ReleaseTable(Table table){
+        // Set teh table to be free
+        table.isFree = true;
+    }
 }
