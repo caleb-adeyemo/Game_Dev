@@ -62,7 +62,7 @@ public class Player : MonoBehaviour, IKitchenObjectParent
         // Listen for OnInteract event Shout!!!
         gameInput.OnInteract += Handle_Interaction;
         // Listen for OnInteract2 event
-        gameInput.OnInteract2 += Handle_Interaction2;
+        gameInput.OnCutAction += Handle_Interaction2;
     }
 
     // Update

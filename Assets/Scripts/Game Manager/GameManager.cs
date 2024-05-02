@@ -14,6 +14,8 @@ public class GameManager : MonoBehaviour{
     }
 
     private GameState gameState;
+
+    private bool IsGamePaused = false;
     private float waitngToStartTimer = 1f;
     private float countDownToStart = 3f;
     private float gamePlaying;
@@ -21,14 +23,23 @@ public class GameManager : MonoBehaviour{
 
     // Event
     public event EventHandler OnStateChanged;
+    public event EventHandler OnGamePaused;
+    public event EventHandler OnGameUnPaused;
 
     public void Awake(){
         Instance = this;
         gameState = GameState.waitingToStart;
     }
 
+    public void Start(){
+        GameInput.Instance.OnPauseAction += OnPauseAction;
+    }
+
+    private void OnPauseAction(object sender, System.EventArgs e){
+        // Pause the game
+        togglePauseGame();
+    }
     public void Update(){
-        Debug.Log("State: " + gameState);
         switch(gameState){
             case GameState.waitingToStart:
                 waitngToStartTimer -= Time.deltaTime;
@@ -73,5 +84,21 @@ public class GameManager : MonoBehaviour{
 
     public float GetGamePlayingTemerNormalized(){
         return gamePlaying/gamePlayingMax;
+    }
+
+    public void togglePauseGame(){
+        // tuggle the pause
+        IsGamePaused = !IsGamePaused;
+        // If the game is paused stop all 'Time.deltaTime' multipler
+        if (IsGamePaused){
+            Time.timeScale = 0f;
+            // Fire off the pause event
+            OnGamePaused?.Invoke(this, new EventArgs());
+        }else{ // Set Multipler to be 'normal'
+            Time.timeScale = 1f;
+            // Fire off the unpause event
+            OnGameUnPaused?.Invoke(this, new EventArgs());
+        }
+        
     }
 }
