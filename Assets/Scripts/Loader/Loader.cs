@@ -9,7 +9,9 @@ public static class Loader{
     public enum Scene{
         Menu,
         LoadingScene,
-        GamePlay
+        GamePlay,
+        Level_2,
+        Level_3
     }
     private static Scene targetScene;
 
