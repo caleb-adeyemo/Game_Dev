@@ -10,7 +10,8 @@ public static class Loader{
         Menu,
         LoadingScene,
         GamePlay,
-        Level_2
+        Level_2,
+        Level_3
     }
     private static Scene targetScene;
 

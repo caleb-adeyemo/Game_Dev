@@ -19,7 +19,7 @@ public class GameManager : MonoBehaviour{
     private float waitngToStartTimer = 1f;
     private float countDownToStart = 3f;
     private float gamePlaying;
-    private float gamePlayingMax = 20f;
+    [SerializeField] private float gamePlayingMax = 20f;
 
     // Event
     public event EventHandler OnStateChanged;
