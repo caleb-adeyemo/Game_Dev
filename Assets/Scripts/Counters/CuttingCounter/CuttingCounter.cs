@@ -5,6 +5,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 
 public class CuttingCounter : BaseCounter, IHasProgress{
+    public static event EventHandler OnAnyCut;
     public event EventHandler<IHasProgress.OnProgressChangedEventArgs> OnProgressChanged;
     public event EventHandler OnCut;
 
@@ -62,6 +63,8 @@ public class CuttingCounter : BaseCounter, IHasProgress{
             cuttingProgress++;
             // Send the event for the cutting annimation
             OnCut?.Invoke(this, EventArgs.Empty);
+            // Trigger the sound
+            OnAnyCut?.Invoke(this, EventArgs.Empty);
             CuttingRecipeSO cuttingRecipeSO = GetCuttingRecipeSOWithInput(GetKitchenObject().GetKitchenObjectsSO());
             // Send event signal for all listeners; that the recipe was cut, and update the progressBar
             OnProgressChanged?.Invoke(this, new IHasProgress.OnProgressChangedEventArgs((float)cuttingProgress/cuttingRecipeSO.cuttingProgressMax, Color.green, false));

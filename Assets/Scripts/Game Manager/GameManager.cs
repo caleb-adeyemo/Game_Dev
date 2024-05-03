@@ -87,7 +87,6 @@ public class GameManager : MonoBehaviour{
     }
 
     public void togglePauseGame(){
-        Debug.Log("Here!@£");
         // tuggle the pause
         IsGamePaused = !IsGamePaused;
         // If the game is paused stop all 'Time.deltaTime' multipler

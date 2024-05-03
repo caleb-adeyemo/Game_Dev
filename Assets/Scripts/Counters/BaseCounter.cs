@@ -1,6 +1,8 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 /*
     Every Class that extends this base class has access to the following:
@@ -17,6 +19,9 @@ public class BaseCounter : MonoBehaviour, IKitchenObjectParent
 
     // ================================================================= Functions =============================================================================
 
+    // Event
+    public static event EventHandler OnItemDrop; // event to trigger sound when a item is dropped
+
     public virtual void Interact(Player player){} // What to do when "spcaeBar" is clicked in front of a counter
 
     public virtual void Interact2(Player player){} // What to do when "c" is clicked in front of a counter
@@ -29,6 +34,10 @@ public class BaseCounter : MonoBehaviour, IKitchenObjectParent
     // Set the KitchenObject the counter thinks is placed on it
     public void SetKitchenObject(KitchenObject newKitchenObject){ 
         kitchenObject = newKitchenObject;
+
+        if(kitchenObject != null){
+            OnItemDrop?.Invoke(this, EventArgs.Empty);
+        }
     }
 
     // Return the kitchenObject that's currently on the counter 

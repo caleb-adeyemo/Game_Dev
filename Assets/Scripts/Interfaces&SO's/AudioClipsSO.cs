@@ -2,17 +2,15 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AudioClipsSO : MonoBehaviour
-{
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+[CreateAssetMenu()]
+public class AudioClipsSO : ScriptableObject{
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+    public AudioClip chop;
+    public AudioClip deleveryFail;
+    public AudioClip deleverySuccess;
+    public AudioClip drop;
+    public AudioClip pickUp;
+    public AudioClip sizzle;
+    public AudioClip trash;
+
 }

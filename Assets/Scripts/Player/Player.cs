@@ -34,6 +34,7 @@ public class Player : MonoBehaviour, IKitchenObjectParent
     public class OnSelectedCounterEventArgs:EventArgs{
         public BaseCounter selectedCounter;
     }
+    public event EventHandler OnPlayerPickUp;
     // Event Handleer
     private void Handle_Interaction(object sender, System.EventArgs e){
         if (!GameManager.Instance.IsGamePlaying()) return; // Stop all interactions if the game is not in playing state
@@ -219,6 +220,10 @@ public class Player : MonoBehaviour, IKitchenObjectParent
 
     public void SetKitchenObject(KitchenObject newKitchenObject){
         kitchenObject = newKitchenObject;
+
+        if (kitchenObject != null){
+            OnPlayerPickUp?.Invoke(this, EventArgs.Empty);
+        }
     }
 
     public KitchenObject GetKitchenObject(){
