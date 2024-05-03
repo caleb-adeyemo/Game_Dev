@@ -7,6 +7,8 @@ public class DeleveryManager : MonoBehaviour{
     public delegate void EventHandler_OnRecipeSpawned(Order order);
     public event EventHandler_OnRecipeSpawned OnRecipeSpawned;
     public event EventHandler OnRecipeCopleted;
+    public event EventHandler OnRecipeSuccess;
+    public event EventHandler OnRecipeFailed;
     public static DeleveryManager Instance { get; private set;}
     [SerializeField] private RecipeListSO recipeListSO;
     private List<RecipeSo> waitingRecipeSoList;
@@ -64,12 +66,13 @@ public class DeleveryManager : MonoBehaviour{
                     waitingRecipeSoList.RemoveAt(i);
                     SuccessfullOrdersNo++;
                     OnRecipeCopleted?.Invoke(this, EventArgs.Empty);
+                    OnRecipeSuccess?.Invoke(this, EventArgs.Empty);
                     return true;
                 }
             }
         }
         // Player did not delever the correct recipe
-        Debug.Log("Player Didn't delever the corrrect recipe!!!");
+        OnRecipeFailed?.Invoke(this, EventArgs.Empty); //Trigger Failed sound
         return false;
     }
 

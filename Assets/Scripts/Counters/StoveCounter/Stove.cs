@@ -4,9 +4,12 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Stove : BaseCounter, IHasProgress{
+    public event EventHandler<OnstateChangedEventArgs> OnStateChanged;
+    public class OnstateChangedEventArgs : EventArgs { 
+        public State state;
+    }
     public event EventHandler<IHasProgress.OnProgressChangedEventArgs> OnProgressChanged;
-    // public event EventHandler<IHasProgress.OnProgressChangedEventArgs> OnProgressChangedToBurning;
-    private enum State{
+    public enum State{
         Idle,
         Frying,
         Fried,
@@ -61,6 +64,8 @@ public class Stove : BaseCounter, IHasProgress{
 
                         // Get the butmingrecipeSO; it contains how long the item should last beofre it's burnt 
                         burningRecipeSO = GetBurningRecipeSOWithInput(GetKitchenObject().GetKitchenObjectsSO());
+
+                        
                     }
                     break;
 
@@ -85,14 +90,20 @@ public class Stove : BaseCounter, IHasProgress{
 
                         // Trigger event to set teh progrssBar fill to 'zero'; It will disapear then
                         OnProgressChanged?.Invoke(this, new IHasProgress.OnProgressChangedEventArgs(0f, Color.green, false));
+
+                        OnStateChanged?.Invoke(this, new OnstateChangedEventArgs{
+                            state = state
+                        });
                     }
                     break;
 
                 case State.Burned:
                     break;
-            // }
-        }
-
+            }
+        // }
+        OnStateChanged?.Invoke(this, new OnstateChangedEventArgs{
+            state = state
+        });
        
     }
 
@@ -113,6 +124,8 @@ public class Stove : BaseCounter, IHasProgress{
                     fryingTimer = 0f;
 
                     OnProgressChanged?.Invoke(this, new IHasProgress.OnProgressChangedEventArgs(fryingTimer/fryingRecipeSO.fryingTimerMax, Color.green, false)) ;
+
+                    
                 }
             }
             // Players hands are empty?
@@ -152,6 +165,7 @@ public class Stove : BaseCounter, IHasProgress{
 
                 // Trigger event to set teh progrssBar fill to 'zero'; It will disapear then
                 OnProgressChanged?.Invoke(this, new IHasProgress.OnProgressChangedEventArgs(0f, Color.green, false));
+
             } 
         }    
     }

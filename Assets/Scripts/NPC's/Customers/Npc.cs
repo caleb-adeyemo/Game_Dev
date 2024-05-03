@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -30,7 +31,7 @@ public class Npc : MonoBehaviour, IKitchenObjectParent{
 
     // Start
     public void Awake(){
-        timeToEat = Random.Range(10, 15);
+        timeToEat = UnityEngine.Random.Range(10, 15);
     }
 
     // Get
@@ -62,6 +63,13 @@ public class Npc : MonoBehaviour, IKitchenObjectParent{
         if (obj != null){
             agent.SetDestination(obj.transform.position); // Set destination for the NPC
         }
+    }
+
+    public bool IsWalking(){
+        if (state == State.WalkingToTable || state == State.Leaving){
+            return true;
+        }
+        return false;
     }
     // ============================= IKitchenObjectParent Functions ==================================
     public Transform GetKitchenObjectFollowTransform(){

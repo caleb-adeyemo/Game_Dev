@@ -1,10 +1,12 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class CuttingCounter : BaseCounter, IHasProgress{
     public event EventHandler<IHasProgress.OnProgressChangedEventArgs> OnProgressChanged;
+    public event EventHandler OnCut;
 
     [SerializeField] private CuttingRecipeSO[] cutKitchenObjectSoArray;
 
@@ -58,6 +60,8 @@ public class CuttingCounter : BaseCounter, IHasProgress{
         if (HasKitchenObject() && HasRecipeWithInput(GetKitchenObject().GetKitchenObjectsSO())){
             // Icrement the cutting progress
             cuttingProgress++;
+            // Send the event for the cutting annimation
+            OnCut?.Invoke(this, EventArgs.Empty);
             CuttingRecipeSO cuttingRecipeSO = GetCuttingRecipeSOWithInput(GetKitchenObject().GetKitchenObjectsSO());
             // Send event signal for all listeners; that the recipe was cut, and update the progressBar
             OnProgressChanged?.Invoke(this, new IHasProgress.OnProgressChangedEventArgs((float)cuttingProgress/cuttingRecipeSO.cuttingProgressMax, Color.green, false));
@@ -68,9 +72,6 @@ public class CuttingCounter : BaseCounter, IHasProgress{
                 GetKitchenObject().DestroySelf();
                 KitchenObject.spawnKitchenObject(outputKitchenObjectSO, player);
             }
-
-            
-
         }
     }
 
