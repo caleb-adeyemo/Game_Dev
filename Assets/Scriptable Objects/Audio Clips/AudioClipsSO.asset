@@ -16,6 +16,6 @@ MonoBehaviour:
   deleveryFail: {fileID: 8300000, guid: a38b8fc6640304dd98346f45b853cef8, type: 3}
   deleverySuccess: {fileID: 8300000, guid: c9580c2faafe34b7686570ca45297bbe, type: 3}
   drop: {fileID: 8300000, guid: f86a8100e42344267a7b39ac96f0d855, type: 3}
-  pickUp: {fileID: 8300000, guid: c05a2e41c49b041888e32327c81cea41, type: 3}
-  sizzle: {fileID: 8300000, guid: a3ca8384d3e9246e383b5f104880e82f, type: 3}
+  pickUp: {fileID: 8300000, guid: fe9266a052ab54759b5cb5a1c0b0c47c, type: 3}
+  sizzle: {fileID: 8300000, guid: 7d299f81ba9c84a809b1832d1e98ada7, type: 3}
   trash: {fileID: 8300000, guid: fe9266a052ab54759b5cb5a1c0b0c47c, type: 3}

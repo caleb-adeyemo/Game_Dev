@@ -55,7 +55,7 @@ public class Npc : MonoBehaviour, IKitchenObjectParent{
     // Functions
     public void SetDestination(Table destinationTable){
         if (destinationTable != null){
-            agent.SetDestination(destinationTable.transform.position); // Set destination for the NPC
+            agent.SetDestination(destinationTable.getSeat().transform.position); // Set destination for the NPC
             setTable(destinationTable);     
         }
     }

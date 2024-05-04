@@ -5887,11 +5887,11 @@ AudioSource:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6588779945092528060}
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: a3ca8384d3e9246e383b5f104880e82f, type: 3}
-  m_PlayOnAwake: 0
+  m_audioClip: {fileID: 8300000, guid: 7d299f81ba9c84a809b1832d1e98ada7, type: 3}
+  m_PlayOnAwake: 1
   m_Volume: 1
   m_Pitch: 1
   Loop: 1
@@ -5983,12 +5983,13 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6588779945092528060}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b7edd67c7fc4f4970b47614947cbab9d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   stove: {fileID: 3229592600149931481}
+  audioClipsSO: {fileID: 11400000, guid: bc4564fdbb77b48aab63a8c9a7013e4c, type: 2}
 --- !u!1 &6737975848220959792
 GameObject:
   m_ObjectHideFlags: 0

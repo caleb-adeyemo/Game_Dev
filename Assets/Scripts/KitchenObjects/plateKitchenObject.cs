@@ -10,6 +10,8 @@ public class Plate : KitchenObject{
     public class OnIngredientAddedEventArgs: EventArgs{
         public KitchenObjectsSO kitchenObjectsSO;
     }
+    public static event EventHandler OnItemDrop; // event to trigger sound when a item is added to plate
+
     // List of valide items that can be added to the plate
     [SerializeField] private List<KitchenObjectsSO> validIngredientsSOList;
 
@@ -42,6 +44,8 @@ public class Plate : KitchenObject{
             OnIngredientAdded?.Invoke(this, new OnIngredientAddedEventArgs{
                 kitchenObjectsSO = ingredientSO
             });
+            // Play added audio 
+            OnItemDrop?.Invoke(this, EventArgs.Empty);
             return true;
         };
         

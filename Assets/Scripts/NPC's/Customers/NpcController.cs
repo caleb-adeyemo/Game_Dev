@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Unity.Mathematics;
 using UnityEngine;
 
 public class NpcController : MonoBehaviour{
@@ -76,7 +77,14 @@ public class NpcController : MonoBehaviour{
                 // Walking To table
                 case Npc.State.WalkingToTable:
                     // Check if the NPC has reached its destination
-                    if (!loopNpc.agent.pathPending && loopNpc.agent.remainingDistance <= loopNpc.agent.stoppingDistance){
+                    if (!loopNpc.agent.pathPending && loopNpc.agent.remainingDistance <= loopNpc.agent.stoppingDistance) {
+
+
+                        Vector3 dir = loopNpc.agent.destination - transform.position;
+                        dir.y = 0;//This allows the object to only rotate on its y axis
+                        quaternion rot = Quaternion.LookRotation(dir);
+                        loopNpc.transform.rotation = Quaternion.Lerp(transform.rotation, rot, 50f * Time.deltaTime);
+
                         // Trigger event to place an order; {Subs => DelevryManger.cs}
                         OnDestinationReached?.Invoke(loopNpc.getTable());
 
@@ -84,6 +92,7 @@ public class NpcController : MonoBehaviour{
                         loopNpc.setState(Npc.State.Waiting);
                     }
                 break;
+
 
                 // Idle
                 case Npc.State.Waiting:

@@ -4,14 +4,21 @@ using UnityEngine;
 
 public class SoundManager : MonoBehaviour{
 
+public static SoundManager Instance { get; private set;}
+
 private float volume = 1f;
 [SerializeField] private AudioClipsSO audioClipsSO;
+
+private void Awake(){
+  Instance = this;
+}
   private void Start(){
     DeleveryManager.Instance.OnRecipeSuccess += OnRecipeSuccess;
     DeleveryManager.Instance.OnRecipeFailed += OnRecipeFailed;
     CuttingCounter.OnAnyCut += OnAnyCut;
     Player.Instance.OnPlayerPickUp += OnPlayerPickUp;
     BaseCounter.OnItemDrop += OnItemDrop;
+    Plate.OnItemDrop += OnItemDrop;
     Bin.OnItemTrashed += OnItemTrashed;
     // Subscribe to the OnSliderChange event of the OptionsUI
     OptionsUI.Instance.OnSliderSfxChange += SetVolume;
@@ -54,7 +61,12 @@ private float volume = 1f;
   
 
   // Function to play sound
-  private void PlaySound(AudioClip audioClip, Vector3 pos, float volume){
+  public void PlaySound(AudioClip audioClip, Vector3 pos, float volume){
     AudioSource.PlayClipAtPoint(audioClip, pos, volume);
+  }
+
+  // Function to get teh volume 
+  public float getVolume(){
+    return volume;
   }
 }
