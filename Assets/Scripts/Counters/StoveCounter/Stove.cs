@@ -1,10 +1,8 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Stove : BaseCounter, IHasProgress{
-    public event EventHandler<OnstateChangedEventArgs> OnStateChanged;
+    public static event EventHandler<OnstateChangedEventArgs> OnStateChanged;
     public class OnstateChangedEventArgs : EventArgs { 
         public State state;
     }
@@ -33,86 +31,77 @@ public class Stove : BaseCounter, IHasProgress{
     }
 
     private void Update(){
-        
-        // If the stove has an object
-        // if(HasKitchenObject()) {
-            switch (state){
-                case State.Idle:
-                    break;
+        switch (state){
+            case State.Idle:
+                break;
 
-                case State.Frying:
-                    // Increment the time cooked
-                    fryingTimer += Time.deltaTime;
+            case State.Frying:
+                // Increment the time cooked
+                fryingTimer += Time.deltaTime;
 
-                    // Trigger event to set the progrssBar fill to 'fryingTimer(Normalized)'; ranges btw 0 -> 1 
-                    OnProgressChanged?.Invoke(this, new IHasProgress.OnProgressChangedEventArgs(fryingTimer / fryingRecipeSO.fryingTimerMax, Color.green, false));
+                // Trigger event to set the progrssBar fill to 'fryingTimer(Normalized)'; ranges btw 0 -> 1 
+                OnProgressChanged?.Invoke(this, new IHasProgress.OnProgressChangedEventArgs(fryingTimer / fryingRecipeSO.fryingTimerMax, Color.green, false));
 
-                    // Check if frying is complete
-                    if (fryingTimer > fryingRecipeSO.fryingTimerMax)
-                    {
-                        // Frying complete
-                        GetKitchenObject().DestroySelf(); // Destroy the Raw meat
+                // Check if frying is complete
+                if (fryingTimer > fryingRecipeSO.fryingTimerMax)
+                {
+                    // Frying complete
+                    GetKitchenObject().DestroySelf(); // Destroy the Raw meat
 
-                        // Spawn cooked meat
-                        KitchenObject.spawnKitchenObject(fryingRecipeSO.output, this);
+                    // Spawn cooked meat
+                    KitchenObject.spawnKitchenObject(fryingRecipeSO.output, this);
 
-                        // Change state to Fried
-                        state = State.Fried;
+                    // Change state to Fried
+                    state = State.Fried;
 
-                        // Set the burning timer
-                        burningTimer = 0f;
+                    // Set the burning timer
+                    burningTimer = 0f;
 
-                        // Get the butmingrecipeSO; it contains how long the item should last beofre it's burnt 
-                        burningRecipeSO = GetBurningRecipeSOWithInput(GetKitchenObject().GetKitchenObjectsSO());
+                    // Get the butmingrecipeSO; it contains how long the item should last beofre it's burnt 
+                    burningRecipeSO = GetBurningRecipeSOWithInput(GetKitchenObject().GetKitchenObjectsSO());
 
-                        
-                    }
-                    break;
+                    
+                }
+                break;
 
-                case State.Fried:
-                    // Increment the time burning
-                    burningTimer += Time.deltaTime;
+            case State.Fried:
+                // Increment the time burning
+                burningTimer += Time.deltaTime;
 
-                    // Trigger event to set the progrssBar fill to 'burningTimer(Normalized)'; ranges btw 0 -> 1 
-                    OnProgressChanged?.Invoke(this, new IHasProgress.OnProgressChangedEventArgs(burningTimer / burningRecipeSO.burningTimerMax, Color.red, true));
+                // Trigger event to set the progrssBar fill to 'burningTimer(Normalized)'; ranges btw 0 -> 1 
+                OnProgressChanged?.Invoke(this, new IHasProgress.OnProgressChangedEventArgs(burningTimer / burningRecipeSO.burningTimerMax, Color.red, true));
 
-                    // Check if burning is complete
-                    if (burningTimer > burningRecipeSO.burningTimerMax)
-                    {
-                        // Meat burned
-                        GetKitchenObject().DestroySelf(); // Destroy the Cooked meat
+                // Check if burning is complete
+                if (burningTimer > burningRecipeSO.burningTimerMax)
+                {
+                    // Meat burned
+                    GetKitchenObject().DestroySelf(); // Destroy the Cooked meat
 
-                        // Spawn burnt meat
-                        KitchenObject.spawnKitchenObject(burningRecipeSO.output, this);
+                    // Spawn burnt meat
+                    KitchenObject.spawnKitchenObject(burningRecipeSO.output, this);
 
-                        // Change state to burned
-                        state = State.Burned;
+                    // Change state to burned
+                    state = State.Burned;
 
-                        // Trigger event to set teh progrssBar fill to 'zero'; It will disapear then
-                        OnProgressChanged?.Invoke(this, new IHasProgress.OnProgressChangedEventArgs(0f, Color.green, false));
+                    // Trigger event to set teh progrssBar fill to 'zero'; It will disapear then
+                    OnProgressChanged?.Invoke(this, new IHasProgress.OnProgressChangedEventArgs(0f, Color.green, false));
+                }
+                break;
 
-                        OnStateChanged?.Invoke(this, new OnstateChangedEventArgs{
-                            state = state
-                        });
-                    }
-                    break;
-
-                case State.Burned:
-                    break;
-            }
-        // }
+            case State.Burned:
+                break;
+        }
         OnStateChanged?.Invoke(this, new OnstateChangedEventArgs{
             state = state
         });
-       
     }
 
     public override void Interact(Player player){
-        // If counter is empty?
+        // If Stove is empty?
         if (!HasKitchenObject()){
-            // If player is holding an object
+            // If player is holding an Ingredient
             if (player.HasKitchenObject()){
-                // Player is holding something that can be fried
+                // Player is holding an ingredient that can be fried
                 if (HasRecipeWithInput(player.GetKitchenObject().GetKitchenObjectsSO())){
                     // Get the object from the player and then set the parent of the object as the counter; i.e. player dropped theitem on the stove
                     player.GetKitchenObject().SetKitcehnObjParent(this);
@@ -122,36 +111,27 @@ public class Stove : BaseCounter, IHasProgress{
                     state = State.Frying;
                     // Reset the timer for the frying food
                     fryingTimer = 0f;
-
+                    // Fire an event to trigger the progress bar to fill up
                     OnProgressChanged?.Invoke(this, new IHasProgress.OnProgressChangedEventArgs(fryingTimer/fryingRecipeSO.fryingTimerMax, Color.green, false)) ;
-
-                    
                 }
-            }
-            // Players hands are empty?
-            else{
-                
             }
         }
         // If the counter is not free
         else {
             // Player is carring something
             if (player.HasKitchenObject()){
-                // Player is carring something
-                if (player.HasKitchenObject()){
-                    // Check to see if the thing the player is carrying is a plate 
-                    if (player.GetKitchenObject().TryGetPlate(out Plate plateKitchenObject1)) {
-                        Plate plateKitchenObject = player.GetKitchenObject() as Plate;
-                        if (plateKitchenObject.TryAddIngredient(GetKitchenObject().GetKitchenObjectsSO())){
-                            // Destroy the KitchenObject that was on the counter
-                            GetKitchenObject().DestroySelf();
+                // Check to see if the thing the player is carrying is a plate 
+                if (player.GetKitchenObject().TryGetPlate(out Plate plateKitchenObject1)) {
+                    Plate plateKitchenObject = player.GetKitchenObject() as Plate;
+                    if (plateKitchenObject.TryAddIngredient(GetKitchenObject().GetKitchenObjectsSO())){
+                        // Destroy the KitchenObject that was on the counter
+                        GetKitchenObject().DestroySelf();
 
-                            // Reset the state of the stove
-                            state = State.Idle;
+                        // Reset the state of the stove
+                        state = State.Idle;
 
-                            // Trigger event to set teh progrssBar fill to 'zero'; It will disapear then
-                            OnProgressChanged?.Invoke(this, new IHasProgress.OnProgressChangedEventArgs(0f, Color.green, false));
-                        }
+                        // Trigger event to set teh progrssBar fill to 'zero'; It will disapear then
+                        OnProgressChanged?.Invoke(this, new IHasProgress.OnProgressChangedEventArgs(0f, Color.green, false));
                     }
                 }
             }
