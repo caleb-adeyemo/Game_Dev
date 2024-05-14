@@ -10,10 +10,15 @@ public class SoundManager : MonoBehaviour{
   [SerializeField] private AudioMixerGroup pick_up_mixer; // Reference to the Pick Up SFX Audio Mixer group
   [SerializeField] private AudioMixerGroup drop_mixer; // Reference to the Drop SFX Audio Mixer group
   [SerializeField] private AudioMixerGroup fry_mixer; // Reference to the Fry SFX Audio Mixer group
+  [SerializeField] private AudioMixerGroup walk_mixer; // Reference to the Fry SFX Audio Mixer group
+
 
 
 private AudioSource fryingAudioSource; // Reference to the AudioSource for sizzling audio
 private bool isFryingAudioPlaying = false; // Flag to track if sizzling audio is currently playing
+
+private AudioSource walkingAudioSource; // Reference to the AudioSource for walking audio
+private bool isWalkingAudioPlaying = false; // Flag to track if walking audio is currently playing
 
 
   private void Start(){
@@ -33,6 +38,8 @@ private bool isFryingAudioPlaying = false; // Flag to track if sizzling audio is
     Bin.OnItemTrashed += OnItemTrashed;
     // Subscribe to the event when the player is frying an item
     Stove.OnStateChanged += OnStateChanged;
+    // listen for the event of a player walking 
+    Player.OnWalking += OnWalking;
   }
 
   // Successful Order
@@ -69,14 +76,33 @@ private bool isFryingAudioPlaying = false; // Flag to track if sizzling audio is
   private void OnStateChanged(object sender, Stove.OnstateChangedEventArgs e){
       // Check if the state is transitioning to "Frying" or "Fried"
       if ((e.state == Stove.State.Frying || e.state == Stove.State.Fried) && !isFryingAudioPlaying) {
-          // Play sizzling audio if it's not already playing
-          fryingAudioSource = PlaySound(audioClipsSO.sizzle, fry_mixer);
-          isFryingAudioPlaying = true; // Set flag to indicate that sizzling audio is now playing
+        Debug.Log("We played the frying audio: " + e.state);
+        // Play sizzling audio if it's not already playing
+        fryingAudioSource = PlaySound(audioClipsSO.sizzle, fry_mixer);
+        isFryingAudioPlaying = true; // Set flag to indicate that sizzling audio is now playing
       } else if (e.state != Stove.State.Frying && e.state != Stove.State.Fried && isFryingAudioPlaying) {
-          // Stop sizzling audio if state changes from "Frying" or "Fried" to any other state
-          StopSound(fryingAudioSource);
-          isFryingAudioPlaying = false; // Reset flag
+        Debug.Log("We stoppped the frying audio : " + e.state);
+        // Stop sizzling audio if state changes from "Frying" or "Fried" to any other state
+        StopSound(fryingAudioSource);
+        isFryingAudioPlaying = false; // Reset flag
       }
+  }
+
+  // Walking 
+  private void OnWalking(object sender, Player.Walk e) {
+    // If the player is wlakin and the audio isnt playing; play the audio
+    if (e.isWalking && !isWalkingAudioPlaying) {
+      Debug.Log("We played the walking audio: " + e.isWalking);
+      walkingAudioSource = PlaySound(audioClipsSO.walking, walk_mixer);
+      isWalkingAudioPlaying = true;
+    }
+    // If the player is Not walking and the audio is still playing; Stop the audio
+    else if(!e.isWalking && isWalkingAudioPlaying){
+      Debug.Log("We Sstopped the walking audio: " + e.isWalking);
+      StopSound(walkingAudioSource);
+      isWalkingAudioPlaying = false;
+    }
+    
   }
 
 

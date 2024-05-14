@@ -19,3 +19,4 @@ MonoBehaviour:
   pickUp: {fileID: 8300000, guid: fe9266a052ab54759b5cb5a1c0b0c47c, type: 3}
   sizzle: {fileID: 8300000, guid: 7d299f81ba9c84a809b1832d1e98ada7, type: 3}
   trash: {fileID: 8300000, guid: fe9266a052ab54759b5cb5a1c0b0c47c, type: 3}
+  walking: {fileID: 8300000, guid: 481799c7f9bcd4ee88617fe693370aa6, type: 3}

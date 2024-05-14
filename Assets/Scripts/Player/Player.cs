@@ -43,6 +43,12 @@ public class Player : MonoBehaviour, IKitchenObjectParent
             selectedCounter.Interact(this);
         }  
     }
+    // Event 
+    public static event EventHandler<Walk> OnWalking;
+
+    public class Walk : EventArgs{
+        public bool isWalking;
+    }
      private void Handle_Interaction2(object sender, System.EventArgs e){
         if (!GameManager.Instance.IsGamePlaying()) return; // Stop all interactions if the game is not in playing state
 
@@ -168,6 +174,8 @@ public class Player : MonoBehaviour, IKitchenObjectParent
     if (moveDir != Vector3.zero){
         transform.forward = Vector3.Slerp(transform.forward, moveDir, Time.deltaTime * rotateSpeed);
     }
+    // Play the wlaking audio if the player is walking
+    OnWalking?.Invoke(this, new Walk{isWalking = isWalking});
 }
 
     public bool IsWaling(){

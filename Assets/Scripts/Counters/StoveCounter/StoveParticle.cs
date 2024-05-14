@@ -13,6 +13,8 @@ public class StoveParticle : MonoBehaviour
 
     private void OnStateChanged(object sender, Stove.OnstateChangedEventArgs e){
         bool showVisual = e.state == Stove.State.Frying || e.state == Stove.State.Fried;
-        particlesGameObject.SetActive(showVisual);
+        if (particlesGameObject!=null){
+            particlesGameObject.SetActive(showVisual);
+        }
     }
 }

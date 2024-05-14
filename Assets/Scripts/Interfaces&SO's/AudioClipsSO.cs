@@ -12,4 +12,6 @@ public class AudioClipsSO : ScriptableObject{
     public AudioClip pickUp;
     public AudioClip sizzle;
     public AudioClip trash;
+    public AudioClip walking;
+
 }
