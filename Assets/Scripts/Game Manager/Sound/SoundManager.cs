@@ -30,7 +30,6 @@ public class SoundManager : MonoBehaviour {
     }
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode) {
-      Debug.Log("We are at " + Loader.targetScene);
         SubscribeToEvents();
     }
 
