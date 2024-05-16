@@ -13,7 +13,7 @@ public static class Loader{
         Level_2,
         Level_3
     }
-    private static Scene targetScene;
+    public static Scene targetScene;
 
     public static void Load(Scene _targetScene){
         targetScene = _targetScene;
