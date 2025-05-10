@@ -25,10 +25,10 @@ public class Stove : BaseCounter, IHasProgress{
 
 
 
-    private void Start(){
-        // the state should be idle till somehting is put on it
-        state = State.Idle;
-    }
+    // private void Start(){
+    //     // the state should be idle till somehting is put on it
+    //     state = State.Idle;
+    // }
 
     private void Update(){
         switch (state){
@@ -43,8 +43,7 @@ public class Stove : BaseCounter, IHasProgress{
                 OnProgressChanged?.Invoke(this, new IHasProgress.OnProgressChangedEventArgs(fryingTimer / fryingRecipeSO.fryingTimerMax, Color.green, false));
 
                 // Check if frying is complete
-                if (fryingTimer > fryingRecipeSO.fryingTimerMax)
-                {
+                if (fryingTimer > fryingRecipeSO.fryingTimerMax){
                     // Frying complete
                     GetKitchenObject().DestroySelf(); // Destroy the Raw meat
 
@@ -59,7 +58,6 @@ public class Stove : BaseCounter, IHasProgress{
 
                     // Get the butmingrecipeSO; it contains how long the item should last beofre it's burnt 
                     burningRecipeSO = GetBurningRecipeSOWithInput(GetKitchenObject().GetKitchenObjectsSO());
-
                     
                 }
                 break;

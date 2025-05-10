@@ -8073,7 +8073,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7f87b1fe3d22242acb53cc1bf9ba68a3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gamePlayingMax: 120
+  gamePlayingMax: 1200
 --- !u!1001 &1286631027
 PrefabInstance:
   m_ObjectHideFlags: 0
